@@ -1,0 +1,12 @@
+package com.example.bibliotheque;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+@SpringBootApplication
+public class BibliothequeApplication extends SpringBootServletInitializer {
+    public static void main(String[] args) {
+        SpringApplication.run(BibliothequeApplication.class, args);
+    }
+}
