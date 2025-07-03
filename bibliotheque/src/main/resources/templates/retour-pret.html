@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Retourner un Prêt</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; }
+        input[type="date"], input[type="submit"] { padding: 8px; font-size: 16px; }
+        input[type="submit"] { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #45a049; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Retourner un Prêt</h1>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <form th:action="@{/prets/retour}" method="post">
+        <input type="hidden" name="pretId" th:value="${pretId}"/>
+        <div>
+            <label>Prêt ID: <span th:text="${pretId}"></span></label>
+        </div>
+        <div>
+            <label>Exemplaire ID: <span th:text="${exemplaireId}"></span></label>
+        </div>
+        <div>
+            <label for="dateRetourEffective">Date de retour effective:</label>
+            <input type="date" id="dateRetourEffective" name="dateRetourEffective" required/>
+        </div>
+        <input type="submit" value="Confirmer le retour"/>
+    </form>
+    <a href="/prets">Retour à la liste des prêts</a>
+</body>
+</html>

@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home</title>
-    <link rel="stylesheet" href="/css/style.css"/>
+    <title>Accueil</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+        h1 { text-align: center; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px 0; }
+        a { text-decoration: none; color: #4CAF50; font-size: 18px; }
+        a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
-    <h2>Welcome to the Library System</h2>
-    <p>Hello, <span th:text="${#authentication.name}"></span>!</p>
-    <a th:href="@{/logout}">Logout</a>
+    <h1>Bienvenue dans la Bibliothèque</h1>
+    <ul>
+        <li><a href="/livres">Liste des livres</a></li>
+        <li><a href="/prets">Voir les prêts</a></li>
+        <li><a href="/reabonnement">Renouveler l'abonnement</a></li>
+        <li><a href="/deconnexion">Déconnexion</a></li>
+    </ul>
 </body>
 </html>
