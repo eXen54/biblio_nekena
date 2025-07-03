@@ -15,6 +15,8 @@ public class Livre {
     private String categorie;
     private String editeur;
     private String langue;
+    private transient int exemplairesDisponibles;
+    private transient Long exemplaireDisponibleId;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -32,4 +34,8 @@ public class Livre {
     public void setEditeur(String editeur) { this.editeur = editeur; }
     public String getLangue() { return langue; }
     public void setLangue(String langue) { this.langue = langue; }
+    public int getExemplairesDisponibles() { return exemplairesDisponibles; }
+    public void setExemplairesDisponibles(int exemplairesDisponibles) { this.exemplairesDisponibles = exemplairesDisponibles; }
+    public Long getExemplaireDisponibleId() { return exemplaireDisponibleId; }
+    public void setExemplaireDisponibleId(Long exemplaireDisponibleId) { this.exemplaireDisponibleId = exemplaireDisponibleId; }
 }

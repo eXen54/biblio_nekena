@@ -9,6 +9,9 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
+        a.button { display: inline-block; padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; }
+        a.button:hover { background-color: #45a049; }
+        a.button:disabled { background-color: #cccccc; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -23,6 +26,8 @@
             <th>Catégorie</th>
             <th>Éditeur</th>
             <th>Langue</th>
+            <th>Exemplaires disponibles</th>
+            <th>Action</th>
         </tr>
         <tr th:each="livre : ${livres}">
             <td th:text="${livre.id}"></td>
@@ -33,8 +38,15 @@
             <td th:text="${livre.categorie}"></td>
             <td th:text="${livre.editeur}"></td>
             <td th:text="${livre.langue}"></td>
+            <td th:text="${livre.exemplairesDisponibles}"></td>
+            <td>
+                <a th:if="${livre.exemplairesDisponibles > 0}"
+                   th:href="@{/prets/nouveau(exemplaireId=${livre.exemplaireDisponibleId})}"
+                   class="button">Prêt</a>
+                <span th:if="${livre.exemplairesDisponibles == 0}" class="button" style="background-color: #cccccc;">Indisponible</span>
+            </td>
         </tr>
     </table>
-    <a href="/deconnexion">Déconnexion</a>
+    <a href="/home">Accueil</a> | <a href="/prets">Voir les prêts</a> | <a href="/deconnexion">Déconnexion</a>
 </body>
 </html>
