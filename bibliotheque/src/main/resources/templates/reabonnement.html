@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Réabonnement</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; }
+        input, select { padding: 8px; font-size: 16px; }
+        input[type="submit"] { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #45a049; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Renouveler l'abonnement</h1>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <form th:action="@{/reabonnement}" method="post">
+        <div>
+            <label>Nom d'utilisateur: <span th:text="${utilisateur.nom}"></span></label>
+        </div>
+        <div>
+            <label for="abonnementType">Type d'abonnement:</label>
+            <select id="abonnementType" name="abonnementType" required>
+                <option value="Normal">Normal</option>
+                <option value="VIP">VIP</option>
+            </select>
+        </div>
+        <div>
+            <label for="abonnementDebut">Date de début d'abonnement:</label>
+            <input type="date" id="abonnementDebut" name="abonnementDebut" required th:value="${utilisateur.abonnementDebut}"/>
+        </div>
+        <div>
+            <label for="abonnementFin">Date de fin d'abonnement:</label>
+            <input type="date" id="abonnementFin" name="abonnementFin" required th:value="${utilisateur.abonnementFin}"/>
+        </div>
+        <input type="submit" value="Renouveler"/>
+    </form>
+    <a href="/home">Retour à l'accueil</a>
+</body>
+</html>

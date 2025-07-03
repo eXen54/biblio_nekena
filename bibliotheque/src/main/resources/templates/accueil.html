@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Accueil - Bibliothèque</title>
+    <title>Accueil</title>
     <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+        h1 { text-align: center; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin: 10px 0; }
+        a { text-decoration: none; color: #4CAF50; font-size: 18px; }
+        a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue dans la bibliothèque</h1>
-    <a href="/deconnexion">Se déconnecter</a>
+    <h1>Bienvenue dans la Bibliothèque</h1>
+    <ul>
+        <li><a href="/livres">Liste des livres</a></li>
+        <li><a href="/prets">Voir les prêts</a></li>
+        <li><a href="/reabonnement">Renouveler l'abonnement</a></li>
+        <li><a href="/deconnexion">Déconnexion</a></li>
+    </ul>
 </body>
 </html>

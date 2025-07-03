@@ -71,4 +71,37 @@ public class PretController {
         exemplaireRepository.save(exemplaire);
         return "redirect:/prets";
     }
+
+    @GetMapping("/prets/retour")
+    public String afficherFormulaireRetour(@RequestParam("pretId") Long pretId, Model model) {
+        Pret pret = pretRepository.findById(pretId)
+                .orElseThrow(() -> new RuntimeException("Prêt non trouvé"));
+        if (!pret.getStatut().equals("en cours")) {
+            model.addAttribute("error", "Ce prêt est déjà terminé ou en retard.");
+            return "retour-pret";
+        }
+        model.addAttribute("pretId", pretId);
+        model.addAttribute("exemplaireId", pret.getExemplaireId());
+        return "retour-pret";
+    }
+
+    @PostMapping("/prets/retour")
+    public String retournerPret(@RequestParam("pretId") Long pretId,
+                               @RequestParam("dateRetourEffective") String dateRetourEffective,
+                               Model model) {
+        Pret pret = pretRepository.findById(pretId)
+                .orElseThrow(() -> new RuntimeException("Prêt non trouvé"));
+        if (!pret.getStatut().equals("en cours")) {
+            model.addAttribute("error", "Ce prêt est déjà terminé ou en retard.");
+            return "retour-pret";
+        }
+        Exemplaire exemplaire = exemplaireRepository.findById(pret.getExemplaireId())
+                .orElseThrow(() -> new RuntimeException("Exemplaire non trouvé"));
+        pret.setDateRetourEffective(LocalDate.parse(dateRetourEffective));
+        pret.setStatut("terminé");
+        exemplaire.setStatut("disponible");
+        pretRepository.save(pret);
+        exemplaireRepository.save(exemplaire);
+        return "redirect:/prets";
+    }
 }
