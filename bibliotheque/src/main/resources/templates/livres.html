@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Liste des livres</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 50px auto; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Liste des livres</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Auteur</th>
+            <th>Date de parution</th>
+            <th>ISBN</th>
+            <th>Catégorie</th>
+            <th>Éditeur</th>
+            <th>Langue</th>
+        </tr>
+        <tr th:each="livre : ${livres}">
+            <td th:text="${livre.id}"></td>
+            <td th:text="${livre.titre}"></td>
+            <td th:text="${livre.auteur}"></td>
+            <td th:text="${livre.dateParution}"></td>
+            <td th:text="${livre.isbn}"></td>
+            <td th:text="${livre.categorie}"></td>
+            <td th:text="${livre.editeur}"></td>
+            <td th:text="${livre.langue}"></td>
+        </tr>
+    </table>
+    <a href="/deconnexion">Déconnexion</a>
+</body>
+</html>
