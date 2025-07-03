@@ -7,10 +7,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 
 @Configuration
 @EnableWebSecurity
@@ -26,21 +26,25 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/connexion", "/error", "/resources/**", "/css/**", "/js/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/connexion", "/inscription", "/error", "/resources/**", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/reservations/gestion/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/home", "/livres", "/prets/**", "/reabonnement", "/reservations/nouveau").hasAuthority("ROLE_ADHERENT")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/connexion")
-                .loginProcessingUrl("/connexion")  // Add this line
-                .defaultSuccessUrl("/accueil", true)
-                .failureUrl("/connexion?error=true")  // Add this line
+                .loginProcessingUrl("/connexion")
+                .defaultSuccessUrl("/home", true)
+                .failureUrl("/connexion?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
                 .logoutUrl("/deconnexion")
                 .logoutSuccessUrl("/connexion?logout")
                 .permitAll()
+            )
+            .exceptionHandling(exceptions -> exceptions
+                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/connexion"))
             );
         return http.build();
     }
@@ -57,6 +61,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();   
- }
+        return NoOpPasswordEncoder.getInstance();
+    }
 }
