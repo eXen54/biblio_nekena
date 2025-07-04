@@ -6,6 +6,7 @@ import com.example.bibliotheque.model.Pret;
 import com.example.bibliotheque.model.Prolongement;
 import com.example.bibliotheque.model.Reservation;
 import com.example.bibliotheque.model.TypeUtilisateur;
+import com.example.bibliotheque.model.ProfilUtilisateur;
 import com.example.bibliotheque.model.Utilisateur;
 import com.example.bibliotheque.repository.ExemplaireRepository;
 import com.example.bibliotheque.repository.LivreRepository;
@@ -218,7 +219,7 @@ public class PretController {
 
         // Quota validation for each profile
         long currentLoans = pretRepository.countByUtilisateurAndStatut(utilisateur, "en cours");
-        if (utilisateur.getType() == TypeUtilisateur.ETUDIANT && currentLoans >= 5) {
+        if (utilisateur.getProfil() == ProfilUtilisateur.Etudiant && currentLoans >= 5) {
             model.addAttribute("error", "Vous avez atteint votre quota de prêts (5 pour Etudiant).");
             model.addAttribute("livre", livre);
             model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
@@ -226,7 +227,7 @@ public class PretController {
             model.addAttribute("utilisateur", utilisateur);
             return "nouveau-pret";
         }
-        if (utilisateur.getType() == TypeUtilisateur.PROFESSIONNEL && currentLoans >= 10) {
+        if (utilisateur.getProfil() == ProfilUtilisateur.Professionnel && currentLoans >= 10) {
             model.addAttribute("error", "Vous avez atteint votre quota de prêts (10 pour Professionnel).");
             model.addAttribute("livre", livre);
             model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
@@ -234,7 +235,7 @@ public class PretController {
             model.addAttribute("utilisateur", utilisateur);
             return "nouveau-pret";
         }
-        if (utilisateur.getType() == TypeUtilisateur.PROFESSEUR && currentLoans >= 15) {
+        if (utilisateur.getProfil() == ProfilUtilisateur.Professeur && currentLoans >= 15) {
             model.addAttribute("error", "Vous avez atteint votre quota de prêts (15 pour Professeur).");
             model.addAttribute("livre", livre);
             model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
@@ -242,7 +243,7 @@ public class PretController {
             model.addAttribute("utilisateur", utilisateur);
             return "nouveau-pret";
         }
-        if (utilisateur.getType() == TypeUtilisateur.ANONYME && currentLoans >= 2) {
+        if (utilisateur.getProfil() == ProfilUtilisateur.Anonyme && currentLoans >= 2) {
             model.addAttribute("error", "Vous avez atteint votre quota de prêts (2 pour Anonyme).");
             model.addAttribute("livre", livre);
             model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));

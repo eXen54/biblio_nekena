@@ -15,8 +15,9 @@
           <a th:href="@{/reservations/gestion}" class="hover:underline"
             >Gestion des réservations</a
           >
-          <a th:href="@{/livres}" class="hover:underline">Liste des livres</a>
-          <a th:href="@{/prets}" class="hover:underline">Liste des prêts</a>
+          <a th:href="@{/pronlogements}" class="hover:underline"
+            >Gestion des pronlogements</a
+          >
           <form th:action="@{/deconnexion}" method="post" class="inline">
             <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
             <button
@@ -41,6 +42,11 @@
           th:href="@{/reservations/gestion}"
           class="text-blue-500 hover:underline"
           >Gérer les réservations</a
+        >
+      </div>
+      <div class="links">
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/admin/statistiques"
+          >statistiques</a
         >
       </div>
     </main>

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface ExemplaireRepository extends JpaRepository<Exemplaire, Long> {
     List<Exemplaire> findByLivreIdAndStatut(Long livreId, String statut);
+
+    long countByStatut(String statut);
 }

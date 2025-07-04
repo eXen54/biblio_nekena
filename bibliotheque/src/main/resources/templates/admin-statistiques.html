@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Statistiques Admin - Bibliothèque</title>
+    <link rel="stylesheet" href="/css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold text-center mb-6">
+        Statistiques de la Bibliothèque
+      </h1>
+
+      <!-- Error message (if any) -->
+      <div
+        th:if="${error}"
+        class="text-red-500 mb-4 text-center"
+        th:text="${error}"
+      ></div>
+
+      <!-- Statistics Section -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Loan Statistics -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold mb-4">Statistiques des Prêts</h2>
+          <table class="w-full text-left">
+            <tr>
+              <th class="p-2">Métrique</th>
+              <th class="p-2">Valeur</th>
+            </tr>
+            <tr>
+              <td class="p-2">Prêts Actifs</td>
+              <td class="p-2" th:text="${totalActiveLoans}"></td>
+            </tr>
+            <tr>
+              <td class="p-2">Prêts en Retard</td>
+              <td class="p-2" th:text="${overdueLoans}"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- User Statistics -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold mb-4">
+            Statistiques des Utilisateurs
+          </h2>
+          <table class="w-full text-left">
+            <tr>
+              <th class="p-2">Type d'Utilisateur</th>
+              <th class="p-2">Nombre</th>
+            </tr>
+            <tr th:each="entry : ${usersByType}">
+              <td class="p-2" th:text="${entry.key}"></td>
+              <td class="p-2" th:text="${entry.value}"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Loans by User Type -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold mb-4">
+            Prêts par Type d'Utilisateur
+          </h2>
+          <table class="w-full text-left">
+            <tr>
+              <th class="p-2">Type d'Utilisateur</th>
+              <th class="p-2">Prêts Actifs</th>
+            </tr>
+            <tr th:each="entry : ${loansByType}">
+              <td class="p-2" th:text="${entry.key}"></td>
+              <td class="p-2" th:text="${entry.value}"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Book Inventory -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-semibold mb-4">Inventaire des Livres</h2>
+          <table class="w-full text-left">
+            <tr>
+              <th class="p-2">Métrique</th>
+              <th class="p-2">Valeur</th>
+            </tr>
+            <tr>
+              <td class="p-2">Total Exemplaires</td>
+              <td class="p-2" th:text="${totalBooks}"></td>
+            </tr>
+            <tr>
+              <td class="p-2">Exemplaires Disponibles</td>
+              <td class="p-2" th:text="${availableBooks}"></td>
+            </tr>
+            <tr>
+              <td class="p-2">Exemplaires Empruntés</td>
+              <td class="p-2" th:text="${borrowedBooks}"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Back to Admin Dashboard -->
+      <div class="text-center mt-6">
+        <a
+          href="/admin"
+          class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >Retour au Tableau de Bord</a
+        >
+      </div>
+    </div>
+  </body>
+</html>
