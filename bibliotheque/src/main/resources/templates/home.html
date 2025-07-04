@@ -1,24 +1,57 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Accueil</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
-        h1 { text-align: center; }
-        ul { list-style-type: none; padding: 0; }
-        li { margin: 10px 0; }
-        a { text-decoration: none; color: #4CAF50; font-size: 18px; }
-        a:hover { text-decoration: underline; }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      li {
+        margin: 10px 0;
+      }
+      a {
+        text-decoration: none;
+        color: #4caf50;
+        font-size: 18px;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Bienvenue dans la Bibliothèque</h1>
     <ul>
-        <li><a href="/livres">Liste des livres</a></li>
-        <li><a href="/prets">Voir les prêts</a></li>
-        <li><a href="/reabonnement">Renouveler l'abonnement</a></li>
-        <li><a href="/deconnexion">Déconnexion</a></li>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/livres">Liste des livres</a>
+      </li>
+      <li><a href="/bibliotheque-0.0.1-SNAPSHOT/prets">Voir les prêts</a></li>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/reabonnement"
+          >Renouveler l'abonnement</a
+        >
+      </li>
+      <li>
+        <form th:action="@{/deconnexion}" method="post" class="inline">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button
+            type="submit"
+            class="hover:underline text-white bg-transparent border-none cursor-pointer"
+          >
+            Déconnexion
+          </button>
+        </form>
+      </li>
     </ul>
-</body>
+  </body>
 </html>

@@ -1,29 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Nouvelle Réservation</title>
-    <link rel="stylesheet" href="/css/style.css"/>
-</head>
-<body>
+    <link rel="stylesheet" href="/bibliotheque-0.0.1-SNAPSHOT/css/style.css" />
+  </head>
+  <body>
     <h1>Réserver un Livre</h1>
-    <div th:if="${error}" th:text="${error}" style="color: red;"></div>
+    <!-- Display error message if present -->
+    <div th:if="${error != null}" class="error">
+      <p th:text="${error}"></p>
+    </div>
     <h2 th:text="'Réservation pour ' + ${livre.titre}"></h2>
     <form th:action="@{/reservations/nouveau}" method="post">
-        <input type="hidden" name="livreId" th:value="${livre.id}"/>
-        <label for="exemplaireId">Exemplaire :</label>
-        <select id="exemplaireId" name="exemplaireId" required>
-            <option th:each="exemplaire : ${exemplaires}"
-                    th:value="${exemplaire.id}"
-                    th:text="'Exemplaire ' + ${exemplaire.id} + ' (' + ${exemplaire.statut} + ')'">
-            </option>
-        </select><br/>
-        <label for="dateReservation">Date de réservation :</label>
-        <input type="date" id="dateReservation" name="dateReservation" required/><br/>
-        <label for="dateExpiration">Date d'expiration :</label>
-        <input type="date" id="dateExpiration" name="dateExpiration"required/><br/>
-        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-        <button type="submit">Réserver</button>
+      <input type="hidden" name="livreId" th:value="${livre.id}" />
+      <label for="exemplaireId">Exemplaire :</label>
+      <select id="exemplaireId" name="exemplaireId" required>
+        <option
+          th:each="exemplaire : ${exemplaires}"
+          th:value="${exemplaire.id}"
+          th:text="'Exemplaire ' + ${exemplaire.id} + ' (' + ${exemplaire.statut} + ')'"
+        ></option></select
+      ><br />
+      <label for="dateReservation">Date de réservation :</label>
+      <input
+        type="date"
+        id="dateReservation"
+        name="dateReservation"
+        required
+      /><br />
+      <label for="dateExpiration">Date d'expiration :</label>
+      <input
+        type="date"
+        id="dateExpiration"
+        name="dateExpiration"
+        required
+      /><br />
+      <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+      <button type="submit">Réserver</button>
     </form>
-    <a th:href="@{/livres}">Retour à la liste des livres</a>
-</body>
+    <ul>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/livres">Liste des livres</a>
+      </li>
+      <li><a href="/bibliotheque-0.0.1-SNAPSHOT/prets">Voir les prêts</a></li>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/reabonnement"
+          >Renouveler l'abonnement</a
+        >
+      </li>
+      <li>
+        <form th:action="@{/deconnexion}" method="post" class="inline">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button
+            type="submit"
+            class="hover:underline text-white bg-transparent border-none cursor-pointer"
+          >
+            Déconnexion
+          </button>
+        </form>
+      </li>
+    </ul>
+  </body>
 </html>

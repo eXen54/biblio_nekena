@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Tableau de bord Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100 font-sans">
+    <nav class="bg-blue-600 text-white p-4 shadow-md">
+      <div class="container mx-auto flex justify-between items-center">
+        <a th:href="@{/homeAdmin}" class="text-xl font-bold"
+          >Bibliothèque - Admin</a
+        >
+        <div class="space-x-4">
+          <a th:href="@{/reservations/gestion}" class="hover:underline"
+            >Gestion des réservations</a
+          >
+          <a th:href="@{/livres}" class="hover:underline">Liste des livres</a>
+          <a th:href="@{/prets}" class="hover:underline">Liste des prêts</a>
+          <form th:action="@{/deconnexion}" method="post" class="inline">
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+            <button
+              type="submit"
+              class="hover:underline text-white bg-transparent border-none cursor-pointer"
+            >
+              Déconnexion
+            </button>
+          </form>
+        </div>
+      </div>
+    </nav>
+    <main class="container mx-auto mt-6 p-4 bg-white rounded-lg shadow-md">
+      <h1 class="text-2xl font-bold text-blue-600 mb-4">
+        Bienvenue, <span th:text="${username}"></span> !
+      </h1>
+      <p class="text-gray-700">
+        Gérez les fonctionnalités administratives depuis cette page.
+      </p>
+      <div class="mt-4">
+        <a
+          th:href="@{/reservations/gestion}"
+          class="text-blue-500 hover:underline"
+          >Gérer les réservations</a
+        >
+      </div>
+    </main>
+    <footer class="bg-blue-600 text-white text-center p-4 mt-6">
+      <p>© 2025 Bibliothèque. Tous droits réservés.</p>
+    </footer>
+  </body>
+</html>

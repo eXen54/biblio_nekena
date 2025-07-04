@@ -1,160 +1,169 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>Gestion des réservations</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        * {
-            box-sizing: border-box;
-        }
+      * {
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f9f9f9;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+      }
 
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            background-color: #fff;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
+      .container {
+        max-width: 1000px;
+        width: 100%;
+        background-color: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 600;
-            color: #2c3e50;
-        }
+      h1 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        color: #2c3e50;
+      }
 
-        .error {
-            color: #e74c3c;
-            background-color: #fceae9;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
+      .error {
+        color: #e74c3c;
+        background-color: #fceae9;
+        padding: 10px;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            border: 1px solid #e0e0e0;
-        }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+        border: 1px solid #e0e0e0;
+      }
 
-        th, td {
-            padding: 12px 16px;
-            border: 1px solid #e0e0e0;
-            text-align: left;
+      th,
+      td {
+        padding: 12px 16px;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f5f6fa;
+        font-weight: 600;
+        color: #555;
+      }
+
+      td {
+        vertical-align: middle;
+      }
+
+      form {
+        display: inline-block;
+        margin-right: 8px;
+      }
+
+      input[type="submit"] {
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .approve {
+        background-color: #27ae60;
+        color: white;
+      }
+
+      .approve:hover {
+        background-color: #1e874b;
+      }
+
+      .reject {
+        background-color: #e74c3c;
+        color: white;
+      }
+
+      .reject:hover {
+        background-color: #c0392b;
+      }
+
+      .links {
+        margin-top: 2rem;
+        text-align: center;
+      }
+
+      .links a {
+        text-decoration: none;
+        color: #3498db;
+        margin: 0 10px;
+        font-weight: 500;
+      }
+
+      .links a:hover {
+        text-decoration: underline;
+      }
+
+      @media (max-width: 768px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
         }
 
         th {
-            background-color: #f5f6fa;
-            font-weight: 600;
-            color: #555;
+          display: none;
         }
 
         td {
-            vertical-align: middle;
+          position: relative;
+          padding-left: 50%;
+          border: none;
+          border-bottom: 1px solid #e0e0e0;
         }
 
-        form {
-            display: inline-block;
-            margin-right: 8px;
+        td::before {
+          content: attr(data-label);
+          position: absolute;
+          left: 16px;
+          top: 12px;
+          font-weight: bold;
+          color: #666;
         }
 
-        input[type="submit"] {
-            padding: 6px 12px;
-            border-radius: 6px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
+        td:last-child {
+          padding-bottom: 16px;
         }
-
-        .approve {
-            background-color: #27ae60;
-            color: white;
-        }
-
-        .approve:hover {
-            background-color: #1e874b;
-        }
-
-        .reject {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        .reject:hover {
-            background-color: #c0392b;
-        }
-
-        .links {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .links a {
-            text-decoration: none;
-            color: #3498db;
-            margin: 0 10px;
-            font-weight: 500;
-        }
-
-        .links a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 768px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-
-            th {
-                display: none;
-            }
-
-            td {
-                position: relative;
-                padding-left: 50%;
-                border: none;
-                border-bottom: 1px solid #e0e0e0;
-            }
-
-            td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 16px;
-                top: 12px;
-                font-weight: bold;
-                color: #666;
-            }
-
-            td:last-child {
-                padding-bottom: 16px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
-<div class="container">
-    <h1>Gestion des réservations</h1>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Gestion des réservations</h1>
 
-    <div th:if="${error}" class="error" th:text="${error}"></div>
+      <div th:if="${error}" class="error" th:text="${error}"></div>
 
-    <table>
+      <table>
         <thead>
-        <tr>
+          <tr>
             <th>ID</th>
             <th>Utilisateur</th>
             <th>Livre</th>
@@ -163,36 +172,57 @@
             <th>Date Expiration</th>
             <th>Statut</th>
             <th>Action</th>
-        </tr>
+          </tr>
         </thead>
         <tbody>
-        <tr th:each="reservation : ${reservations}">
+          <tr th:each="reservation : ${reservations}">
             <td data-label="ID" th:text="${reservation.id}"></td>
-            <td data-label="Utilisateur" th:text="${reservation.utilisateur.nom}"></td>
-            <td data-label="Livre" th:text="${reservation.exemplaire.livre.titre}"></td>
-            <td data-label="Exemplaire ID" th:text="${reservation.exemplaire.id}"></td>
-            <td data-label="Date Réservation" th:text="${reservation.dateReservation}"></td>
-            <td data-label="Date Expiration" th:text="${reservation.dateExpiration}"></td>
+            <td
+              data-label="Utilisateur"
+              th:text="${reservation.utilisateur.nom}"
+            ></td>
+            <td
+              data-label="Livre"
+              th:text="${reservation.exemplaire.livre.titre}"
+            ></td>
+            <td
+              data-label="Exemplaire ID"
+              th:text="${reservation.exemplaire.id}"
+            ></td>
+            <td
+              data-label="Date Réservation"
+              th:text="${reservation.dateReservation}"
+            ></td>
+            <td
+              data-label="Date Expiration"
+              th:text="${reservation.dateExpiration}"
+            ></td>
             <td data-label="Statut" th:text="${reservation.statut}"></td>
             <td data-label="Action">
-                <form th:action="@{/reservations/approuver}" method="post">
-                    <input type="hidden" name="reservationId" th:value="${reservation.id}"/>
-                    <input type="submit" value="Approuver" class="approve"/>
-                </form>
-                <form th:action="@{/reservations/rejeter}" method="post">
-                    <input type="hidden" name="reservationId" th:value="${reservation.id}"/>
-                    <input type="submit" value="Rejeter" class="reject"/>
-                </form>
+              <form th:action="@{/reservations/approuver}" method="post">
+                <input
+                  type="hidden"
+                  name="reservationId"
+                  th:value="${reservation.id}"
+                />
+                <input type="submit" value="Approuver" class="approve" />
+              </form>
+              <form th:action="@{/reservations/rejeter}" method="post">
+                <input
+                  type="hidden"
+                  name="reservationId"
+                  th:value="${reservation.id}"
+                />
+                <input type="submit" value="Rejeter" class="reject" />
+              </form>
             </td>
-        </tr>
+          </tr>
         </tbody>
-    </table>
+      </table>
 
-    <div class="links">
-        <a href="/admin">Retour à l'admin</a> |
-        <a href="/home">Accueil</a> |
-        <a href="/deconnexion">Déconnexion</a>
+      <div class="links">
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/prolongements">Prolongements</a>
+      </div>
     </div>
-</div>
-</body>
+  </body>
 </html>

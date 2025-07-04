@@ -1,34 +1,60 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Connexion</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
-        h1 { text-align: center; }
-        form { display: flex; flex-direction: column; gap: 15px; }
-        label { font-weight: bold; }
-        input { padding: 8px; font-size: 16px; }
-        input[type="submit"] { background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-        input[type="submit"]:hover { background-color: #45a049; }
-        .error { color: red; }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 50px auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      label {
+        font-weight: bold;
+      }
+      input {
+        padding: 8px;
+        font-size: 16px;
+      }
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+      .error {
+        color: red;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Connexion</h1>
-    <div th:if="${param.error}" class="error">Nom d'utilisateur ou mot de passe incorrect.</div>
+    <div th:if="${param.error}" class="error">
+      Nom d'utilisateur ou mot de passe incorrect.
+    </div>
     <div th:if="${param.logout}" class="error">Vous avez été déconnecté.</div>
     <form th:action="@{/connexion}" method="post">
-        <div>
-            <label for="username">Nom d'utilisateur:</label>
-            <input type="text" id="username" name="username" required/>
-        </div>
-        <div>
-            <label for="password">Mot de passe:</label>
-            <input type="password" id="password" name="password" required/>
-        </div>
-        <input type="submit" value="Se connecter"/>
+      <div>
+        <label for="username">Nom d'utilisateur:</label>
+        <input type="text" id="username" name="username" required />
+      </div>
+      <div>
+        <label for="password">Mot de passe:</label>
+        <input type="password" id="password" name="password" required />
+      </div>
+      <input type="submit" value="Se connecter" />
     </form>
-    <a href="/inscription">S'inscrire</a>
-</body>
+    <a href="/bibliotheque-0.0.1-SNAPSHOT/inscription">S'inscrire</a>
+  </body>
 </html>

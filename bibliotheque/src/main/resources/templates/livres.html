@@ -1,54 +1,104 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Liste des livres</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; }
-        h1 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        a { color: #4CAF50; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .error { color: red; }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      a {
+        color: #4caf50;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .error {
+        color: red;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Liste des livres</h1>
     <div th:if="${error}" class="error" th:text="${error}"></div>
     <table>
-        <tr>
-            <th>Titre</th>
-            <th>Auteur</th>
-            <th>ISBN</th>
-            <th>Date de parution</th>
-            <th>Exemplaires disponibles</th>
-            <th>Action</th>
-        </tr>
-        <tr th:each="livre : ${livres}">
-            <td th:text="${livre.titre}"></td>
-            <td th:text="${livre.auteur}"></td>
-            <td th:text="${livre.isbn}"></td>
-            <td th:text="${livre.dateParution}"></td>
-            <td>
-                <ul>
-                    <li th:each="exemplaire : ${livre.exemplaires}"
-                        th:if="${exemplaire.statut == 'disponible'}">
-                        Exemplaire ID: <span th:text="${exemplaire.id}"></span>
-                    </li>
-                </ul>
-            </td>
-            <td>
-                <a th:if="${livre.exemplaires != null and #lists.size(livre.exemplaires.?[statut == 'disponible']) > 0}"
-                   th:href="@{/prets/nouveau(exemplaireId=${livre.exemplaires.?[statut == 'disponible'][0].id})}"
-                   class="button">Prêt</a>
-                <a th:if="${livre.exemplaires.?[statut == 'disponible'].size() > 0}"
-                   th:href="@{/reservations/nouveau(livreId=${livre.id})}">Réserver</a>
-            </td>
-        </tr>
+      <tr>
+        <th>Titre</th>
+        <th>Auteur</th>
+        <th>ISBN</th>
+        <th>Date de parution</th>
+        <th>Exemplaires disponibles</th>
+        <th>Action</th>
+      </tr>
+      <tr th:each="livre : ${livres}">
+        <td th:text="${livre.titre}"></td>
+        <td th:text="${livre.auteur}"></td>
+        <td th:text="${livre.isbn}"></td>
+        <td th:text="${livre.dateParution}"></td>
+        <td>
+          <ul>
+            <li
+              th:each="exemplaire : ${livre.exemplaires}"
+              th:if="${exemplaire.statut == 'disponible'}"
+            >
+              Exemplaire ID: <span th:text="${exemplaire.id}"></span>
+            </li>
+          </ul>
+        </td>
+        <td>
+          <a
+            th:if="${livre.exemplaires != null and #lists.size(livre.exemplaires.?[statut == 'disponible']) > 0}"
+            th:href="@{/prets/nouveau(exemplaireId=${livre.exemplaires.?[statut == 'disponible'][0].id})}"
+            class="button"
+            >Prêt</a
+          >
+          <a
+            th:if="${livre.exemplaires.?[statut == 'disponible'].size() > 0}"
+            th:href="@{/reservations/nouveau(livreId=${livre.id})}"
+            >Réserver</a
+          >
+        </td>
+      </tr>
     </table>
-    <br/>
-    <a href="/home">Accueil</a> | <a href="/deconnexion">Déconnexion</a>
-</body>
+    <br />
+    <ul>
+      <li><a href="/bibliotheque-0.0.1-SNAPSHOT/prets">Voir les prêts</a></li>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/reabonnement"
+          >Renouveler l'abonnement</a
+        >
+      </li>
+      <li>
+        <form th:action="@{/deconnexion}" method="post" class="inline">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button
+            type="submit"
+            class="hover:underline text-white bg-transparent border-none cursor-pointer"
+          >
+            Déconnexion
+          </button>
+        </form>
+      </li>
+    </ul>
+  </body>
 </html>

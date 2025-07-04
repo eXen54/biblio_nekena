@@ -1,49 +1,104 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Liste des Prêts</title>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <style>
-        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 50px auto; }
-        h1 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        a.button { display: inline-block; padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; margin-right: 5px; }
-        a.button:hover { background-color: #45a049; }
-        a.prolong-button { background-color: #2196F3; }
-        a.prolong-button:hover { background-color: #1e88e5; }
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1000px;
+        margin: 50px auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      a.button {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #4caf50;
+        color: white;
+        text-decoration: none;
+        margin-right: 5px;
+      }
+      a.button:hover {
+        background-color: #45a049;
+      }
+      a.prolong-button {
+        background-color: #2196f3;
+      }
+      a.prolong-button:hover {
+        background-color: #1e88e5;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Liste des Prêts</h1>
     <table>
-        <tr>
-            <th>ID</th>
-            <th>Utilisateur ID</th>
-            <th>Exemplaire ID</th>
-            <th>Date de prêt</th>
-            <th>Date de retour prévue</th>
-            <th>Statut</th>
-            <th>Action</th>
-        </tr>
-        <tr th:each="pret : ${prets}">
-            <td th:text="${pret.id}"></td>
-            <td th:text="${pret.utilisateurId}"></td>
-            <td th:text="${pret.exemplaireId}"></td>
-            <td th:text="${pret.datePret}"></td>
-            <td th:text="${pret.dateRetourPrevue}"></td>
-            <td th:text="${pret.statut}"></td>
-            <td>
-                <a th:if="${pret.statut == 'en cours'}"
-                   th:href="@{/prets/retour(pretId=${pret.id})}"
-                   class="button">Retourner</a>
-                <a th:if="${pret.statut == 'en cours'}"
-                   th:href="@{/prets/prolongement(pretId=${pret.id})}"
-                   class="button prolong-button">Prolonger</a>
-            </td>
-        </tr>
+      <tr>
+        <th>ID</th>
+        <th>Utilisateur ID</th>
+        <th>Exemplaire ID</th>
+        <th>Date de prêt</th>
+        <th>Date de retour prévue</th>
+        <th>Statut</th>
+        <th>Action</th>
+      </tr>
+      <tr th:each="pret : ${prets}">
+        <td th:text="${pret.id}"></td>
+        <td th:text="${pret.utilisateurId}"></td>
+        <td th:text="${pret.exemplaireId}"></td>
+        <td th:text="${pret.datePret}"></td>
+        <td th:text="${pret.dateRetourPrevue}"></td>
+        <td th:text="${pret.statut}"></td>
+        <td>
+          <a
+            th:if="${pret.statut == 'en cours'}"
+            th:href="@{/prets/retour(pretId=${pret.id})}"
+            class="button"
+            >Retourner</a
+          >
+          <a
+            th:if="${pret.statut == 'en cours'}"
+            th:href="@{/prets/prolongement(pretId=${pret.id})}"
+            class="button prolong-button"
+            >Prolonger</a
+          >
+        </td>
+      </tr>
     </table>
-    <a href="/home">Accueil</a> | <a href="/livres">Liste des livres</a> | <a href="/deconnexion">Déconnexion</a>
-</body>
+    <ul>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/livres">Liste des livres</a>
+      </li>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/reabonnement"
+          >Renouveler l'abonnement</a
+        >
+      </li>
+      <li>
+        <form th:action="@{/deconnexion}" method="post" class="inline">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button
+            type="submit"
+            class="hover:underline text-white bg-transparent border-none cursor-pointer"
+          >
+            Déconnexion
+          </button>
+        </form>
+      </li>
+    </ul>
+  </body>
 </html>

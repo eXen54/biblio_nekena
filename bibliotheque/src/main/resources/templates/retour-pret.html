@@ -1,22 +1,48 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Retour de prêt</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Retour de prêt</h1>
-    <div th:if="${error != null}" style="color: red;">
-        <p th:text="${error}"></p>
+    <div th:if="${error != null}" style="color: red">
+      <p th:text="${error}"></p>
     </div>
-    <div th:if="${message != null}" style="color: green;">
-        <p th:text="${message}"></p>
+    <div th:if="${message != null}" style="color: green">
+      <p th:text="${message}"></p>
     </div>
     <form th:action="@{/prets/retour}" method="post" th:if="${error == null}">
-        <input type="hidden" name="pretId" th:value="${pretId}"/>
-        <label for="dateRetourEffective">Date de retour effective :</label>
-        <input type="date" id="dateRetourEffective" name="dateRetourEffective" required/>
-        <button type="submit">Retourner</button>
+      <input type="hidden" name="pretId" th:value="${pretId}" />
+      <label for="dateRetourEffective">Date de retour effective :</label>
+      <input
+        type="date"
+        id="dateRetourEffective"
+        name="dateRetourEffective"
+        required
+      />
+      <button type="submit">Retourner</button>
     </form>
-    <a href="/prets">Retour à la liste des prêts</a>
-</body>
+    <ul>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/livres">Liste des livres</a>
+      </li>
+      <li><a href="/bibliotheque-0.0.1-SNAPSHOT/prets">Voir les prêts</a></li>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/reabonnement"
+          >Renouveler l'abonnement</a
+        >
+      </li>
+      <li>
+        <form th:action="@{/deconnexion}" method="post" class="inline">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button
+            type="submit"
+            class="hover:underline text-white bg-transparent border-none cursor-pointer"
+          >
+            Déconnexion
+          </button>
+        </form>
+      </li>
+    </ul>
+  </body>
 </html>

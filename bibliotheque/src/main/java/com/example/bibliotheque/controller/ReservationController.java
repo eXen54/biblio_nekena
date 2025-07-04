@@ -36,7 +36,8 @@ public class ReservationController {
     private UtilisateurRepository utilisateurRepository;
 
     @GetMapping("/reservations/nouveau")
-    public String afficherFormulaireReservation(@RequestParam("livreId") Long livreId, Model model, Authentication authentication) {
+    public String afficherFormulaireReservation(@RequestParam("livreId") Long livreId, Model model,
+            Authentication authentication) {
         if (!livreRepository.existsById(livreId)) {
             model.addAttribute("error", "Livre non trouvé...");
             return "redirect:/livres";
@@ -67,39 +68,67 @@ public class ReservationController {
 
     @PostMapping("/reservations/nouveau")
     public String soumettreReservation(@RequestParam("livreId") Long livreId,
-                                      @RequestParam("exemplaireId") Long exemplaireId,
-                                      @RequestParam("dateReservation") String dateReservation,
-                                      @RequestParam("dateExpiration") String dateExpiration,
-                                      Authentication authentication,
-                                      Model model) {
+            @RequestParam("exemplaireId") Long exemplaireId,
+            @RequestParam("dateReservation") String dateReservation,
+            @RequestParam("dateExpiration") String dateExpiration,
+            Authentication authentication,
+            Model model) {
+        // Validate livre and exemplaire existence
         if (!livreRepository.existsById(livreId) || !exemplaireRepository.existsById(exemplaireId)) {
-            model.addAttribute("error", "Livre ou exemplaire non trouvé...");
-            return "redirect:/livres";
+            model.addAttribute("error", "Livre ou exemplaire non trouvé.");
+            model.addAttribute("livreId", livreId);
+            model.addAttribute("livre", livreRepository.findById(livreId).orElse(null));
+            model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
+            return "reservation";
         }
 
         String username = authentication.getName();
         Utilisateur utilisateur = utilisateurRepository.findByNom(username)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
+        // Check if user is an Adherent
         if (utilisateur.getType() != TypeUtilisateur.Adherent) {
             model.addAttribute("error", "Seuls les adhérents peuvent réserver.");
-            return "redirect:/livres";
+            model.addAttribute("livreId", livreId);
+            model.addAttribute("livre", livreRepository.findById(livreId).orElse(null));
+            model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
+            return "reservation";
         }
 
-        Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId).get();
-        if (!exemplaire.getStatut().equals("disponible")) {
+        Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId).orElse(null);
+        if (exemplaire == null || !exemplaire.getStatut().equals("disponible")) {
             model.addAttribute("error", "Cet exemplaire n'est plus disponible.");
-            return "redirect:/livres";
+            model.addAttribute("livreId", livreId);
+            model.addAttribute("livre", livreRepository.findById(livreId).orElse(null));
+            model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
+            return "reservation";
+        }
+
+        // Parse dates
+        LocalDate reservationDate = LocalDate.parse(dateReservation);
+        LocalDate expirationDate = LocalDate.parse(dateExpiration);
+
+        // Check penalty status
+        LocalDate penaliteFin = utilisateur.getPenaliteFin();
+        if (penaliteFin != null && (reservationDate.isBefore(penaliteFin) || expirationDate.isBefore(penaliteFin))) {
+            model.addAttribute("error", "Vous serez encore en pénalité jusqu'au " + penaliteFin);
+            model.addAttribute("livreId", livreId);
+            model.addAttribute("livre", livreRepository.findById(livreId).orElse(null));
+            model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
+            return "reservation";
         }
 
         // Validate dates
-        LocalDate reservationDate = LocalDate.parse(dateReservation);
-        LocalDate expirationDate = LocalDate.parse(dateExpiration);
         if (expirationDate.isBefore(reservationDate) || expirationDate.isBefore(LocalDate.now())) {
-            model.addAttribute("error", "La date d'expiration doit être postérieure à la date de réservation et à aujourd'hui.");
-            return "redirect:/reservations/nouveau?livreId=" + livreId;
+            model.addAttribute("error",
+                    "La date d'expiration doit être postérieure à la date de réservation et à aujourd'hui.");
+            model.addAttribute("livreId", livreId);
+            model.addAttribute("livre", livreRepository.findById(livreId).orElse(null));
+            model.addAttribute("exemplaires", exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible"));
+            return "reservation";
         }
 
+        // Create and save reservation
         Reservation reservation = new Reservation();
         reservation.setUtilisateur(utilisateur);
         reservation.setExemplaire(exemplaire);

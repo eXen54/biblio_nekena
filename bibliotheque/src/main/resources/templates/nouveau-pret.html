@@ -1,46 +1,89 @@
 ```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>Nouveau Prêt</title>
     <style>
-        .error { color: red; }
+      .error {
+        color: red;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Nouveau Prêt</h1>
 
     <!-- Display error message if present -->
     <div th:if="${error != null}" class="error">
-        <p th:text="${error}"></p>
+      <p th:text="${error}"></p>
     </div>
 
     <!-- Display form only if livre and utilisateur are not null -->
     <div th:if="${livre != null and utilisateur != null}">
-        <form th:action="@{/prets/nouveau}" method="post">
-            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
-            <input type="hidden" name="exemplaireId" th:value="${selectedExemplaireId}"/>
-            <input type="hidden" name="livreId" th:value="${livre.id}"/>
-            <input type="hidden" name="utilisateurId" th:value="${utilisateur.id}"/>
-            <p><strong>Livre :</strong> <span th:text="${livre.titre}"></span></p>
-            <p><strong>Utilisateur :</strong> <span th:text="${utilisateur.nom}"></span></p>
-            <label for="exemplaireSelect">Exemplaire :</label>
-            <select id="exemplaireSelect" name="exemplaireId">
-                <option th:each="exemplaire : ${exemplaires}"
-                        th:value="${exemplaire.id}"
-                        th:text="'Exemplaire ' + ${exemplaire.id} + ' (' + ${exemplaire.statut} + ')'"
-                        th:selected="${exemplaire.id == selectedExemplaireId}">
-                </option>
-            </select>
-            <br/>
-            <label for="dateEmprunt">Date d'emprunt :</label>
-            <input type="date" id="dateEmprunt" name="dateEmprunt"
-                   th:value="${#temporals.format(#temporals.today(), 'yyyy-MM-dd')}" required/>
-            <br/>
-            <button type="submit">Créer Prêt</button>
-        </form>
+      <form th:action="@{/prets/nouveau}" method="post">
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+        <input
+          type="hidden"
+          name="exemplaireId"
+          th:value="${selectedExemplaireId}"
+        />
+        <input type="hidden" name="livreId" th:value="${livre.id}" />
+        <input
+          type="hidden"
+          name="utilisateurId"
+          th:value="${utilisateur.id}"
+        />
+        <p><strong>Livre :</strong> <span th:text="${livre.titre}"></span></p>
+        <p>
+          <strong>Utilisateur :</strong>
+          <span th:text="${utilisateur.nom}"></span>
+        </p>
+        <label for="exemplaireSelect">Exemplaire :</label>
+        <select id="exemplaireSelect" name="exemplaireId">
+          <option
+            th:each="exemplaire : ${exemplaires}"
+            th:value="${exemplaire.id}"
+            th:text="'Exemplaire ' + ${exemplaire.id} + ' (' + ${exemplaire.statut} + ')'"
+            th:selected="${exemplaire.id == selectedExemplaireId}"
+          ></option>
+        </select>
+        <br />
+        <label for="datePret">Date d'emprunt :</label>
+        <input type="date" id="datePret" name="datePret" required />
+        <br />
+        <br />
+        <label for="dateRetourPrevue">Date dateRetour :</label>
+        <input
+          type="date"
+          id="dateRetourPrevue"
+          name="dateRetourPrevue"
+          required
+        />
+        <br />
+        <button type="submit">Créer Prêt</button>
+      </form>
     </div>
 
-    <a href="/prets">Retour à la liste des prêts</a>
-</body>
+    <ul>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/livres">Liste des livres</a>
+      </li>
+      <li><a href="/bibliotheque-0.0.1-SNAPSHOT/prets">Voir les prêts</a></li>
+      <li>
+        <a href="/bibliotheque-0.0.1-SNAPSHOT/reabonnement"
+          >Renouveler l'abonnement</a
+        >
+      </li>
+      <li>
+        <form th:action="@{/deconnexion}" method="post" class="inline">
+          <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+          <button
+            type="submit"
+            class="hover:underline text-white bg-transparent border-none cursor-pointer"
+          >
+            Déconnexion
+          </button>
+        </form>
+      </li>
+    </ul>
+  </body>
 </html>

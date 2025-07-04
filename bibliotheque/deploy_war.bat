@@ -2,8 +2,8 @@
 ECHO Starting WAR file deployment process...
 
 :: Set project-specific variables
-SET PROJECT_DIR=C:\Users\NEKENA\Documents\Nekena\Projets\s4\Web-Dyn\biblio_nekena\bibliotheque
-SET TOMCAT_DIR=C:\Users\NEKENA\Documents\Nekena\Projets\s4\Web-Dyn\apache-tomcat-10.1.30
+SET PROJECT_DIR=C:\Users\itu\Documents\Projet\s4\Web-Dyn\EXAM2\biblio_nekena\bibliotheque
+SET TOMCAT_DIR=C:\Users\itu\Documents\Projet\s4\Web-Dyn\apache-tomcat-10.1.28
 SET WAR_FILE=target\bibliotheque-0.0.1-SNAPSHOT.war
 SET WEBAPPS_DIR=%TOMCAT_DIR%\webapps
 SET CATALINA_HOME=%TOMCAT_DIR%
