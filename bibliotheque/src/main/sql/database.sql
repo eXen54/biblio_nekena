@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS utilisateur (
     abonnement_fin DATE,
     mot_de_passe VARCHAR(255) NOT NULL
 );
+ALTER TABLE utilisateur ADD COLUMN penalite_fin DATE NULL;
 
 -- Table: livre
 CREATE TABLE IF NOT EXISTS livre (
