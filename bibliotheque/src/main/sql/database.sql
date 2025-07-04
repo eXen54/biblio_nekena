@@ -58,3 +58,14 @@ CREATE TABLE IF NOT EXISTS reservation (
     FOREIGN KEY (exemplaire_id) REFERENCES exemplaire(id)
 );
 
+-- Table: prolongement
+CREATE TABLE IF NOT EXISTS prolongement (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    pret_id BIGINT NOT NULL,
+    utilisateur_id BIGINT NOT NULL,
+    date_demande DATE NOT NULL,
+    nouvelle_date_retour DATE NOT NULL,
+    statut VARCHAR(20) NOT NULL,
+    FOREIGN KEY (pret_id) REFERENCES pret(id),
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateur(id)
+);

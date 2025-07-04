@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Gestion des Prolongations</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1000px; margin: 50px auto; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .button { display: inline-block; padding: 5px 10px; color: white; text-decoration: none; margin-right: 5px; }
+        .approve-button { background-color: #4CAF50; }
+        .approve-button:hover { background-color: #45a049; }
+        .reject-button { background-color: #f44336; }
+        .reject-button:hover { background-color: #da190b; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Gestion des Demandes de Prolongation</h1>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Prêt ID</th>
+            <th>Utilisateur ID</th>
+            <th>Date de Demande</th>
+            <th>Nouvelle Date de Retour</th>
+            <th>Statut</th>
+            <th>Action</th>
+        </tr>
+        <tr th:each="prolongement : ${prolongements}">
+            <td th:text="${prolongement.id}"></td>
+            <td th:text="${prolongement.pretId}"></td>
+            <td th:text="${prolongement.utilisateurId}"></td>
+            <td th:text="${prolongement.dateDemande}"></td>
+            <td th:text="${prolongement.nouvelleDateRetour}"></td>
+            <td th:text="${prolongement.statut}"></td>
+            <td>
+                <form th:action="@{/prolongements/valider}" method="post" style="display: inline;">
+                    <input type="hidden" name="prolongementId" th:value="${prolongement.id}"/>
+                    <input type="hidden" name="decision" value="approuve"/>
+                    <button type="submit" class="button approve-button">Approuver</button>
+                </form>
+                <form th:action="@{/prolongements/valider}" method="post" style="display: inline;">
+                    <input type="hidden" name="prolongementId" th:value="${prolongement.id}"/>
+                    <input type="hidden" name="decision" value="rejete"/>
+                    <button type="submit" class="button reject-button">Rejeter</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <p><a href="/home">Accueil</a> | <a href="/prets">Liste des prêts</a> | <a href="/deconnexion">Déconnexion</a></p>
+</body>
+</html>
