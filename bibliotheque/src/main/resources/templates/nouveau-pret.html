@@ -1,37 +1,40 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Nouveau Prêt</title>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; }
-        h1 { text-align: center; }
-        form { display: flex; flex-direction: column; gap: 10px; }
-        label { margin-top: 10px; }
-        input, select { padding: 5px; }
-        input[type="submit"] { background-color: #4CAF50; color: white; border: none; padding: 10px; cursor: pointer; }
-        a { color: #4CAF50; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .error { color: red; }
-    </style>
-</head>
-<body>
-    <h1>Nouveau Prêt</h1>
-    <div th:if="${error}" class="error" th:text="${error}"></div>
-    <form th:action="@{/prets/nouveau}" method="post">
-        <input type="hidden" name="livreId" th:value="${livre.id}"/>
-        <label>Livre: <span th:text="${livre.titre}"></span></label>
-        <label for="exemplaireId">Exemplaire:</label>
-        <select id="exemplaireId" name="exemplaireId">
-            <option th:each="exemplaire : ${exemplaires}" th:value="${exemplaire.id}" th:text="'Exemplaire ID: ' + ${exemplaire.id} + ' (' + ${exemplaire.statut} + ')'"></option>
-        </select>
-        <label for="datePret">Date de prêt:</label>
-        <input type="date" id="datePret" name="datePret" required/>
-        <label for="dateRetourPrevue">Date de retour prévue:</label>
-        <input type="date" id="dateRetourPrevue" name="dateRetourPrevue" required/>
-        <input type="submit" value="Emprunter"/>
-    </form>
-    <br/>
-    <a href="/livres">Retour aux livres</a> | <a href="/home">Accueil</a> | <a href="/deconnexion">Déconnexion</a>
-</body>
-</html>
+   <!DOCTYPE html>
+   <html xmlns:th="http://www.thymeleaf.org">
+   <head>
+       <title>Nouveau Prêt</title>
+       <meta charset="UTF-8">
+       <style>
+           body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; }
+           h1 { text-align: center; }
+           form { display: flex; flex-direction: column; gap: 10px; }
+           label { margin-top: 10px; }
+           input, select { padding: 5px; }
+           input[type="submit"] { background-color: #4CAF50; color: white; border: none; padding: 10px; cursor: pointer; }
+           a { color: #4CAF50; text-decoration: none; }
+           a:hover { text-decoration: underline; }
+           .error { color: red; }
+       </style>
+   </head>
+   <body>
+       <h1>Nouveau Prêt</h1>
+       <div th:if="${error}" class="error" th:text="${error}"></div>
+       <form th:action="@{/prets/nouveau}" method="post">
+           <input type="hidden" name="livreId" th:value="${livre.id}"/>
+           <label>Livre: <span th:text="${livre.titre}"></span></label>
+           <label for="exemplaireId">Exemplaire:</label>
+           <select id="exemplaireId" name="exemplaireId" required>
+               <option th:each="exemplaire : ${exemplaires}"
+                       th:value="${exemplaire.id}"
+                       th:text="${exemplaire.id}"
+                       th:selected="${exemplaire.id == selectedExemplaireId}"></option>
+           </select>
+           <label for="datePret">Date de prêt:</label>
+           <input type="date" id="datePret" name="datePret" th:value="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}" required/>
+           <label for="dateRetourPrevue">Date de retour prévue:</label>
+           <input type="date" id="dateRetourPrevue" name="dateRetourPrevue" required/>
+           <input type="submit" value="Emprunter"/>
+       </form>
+       <br/>
+       <a href="/livres">Retour aux livres</a> | <a href="/home">Accueil</a> | <a href="/deconnexion">Déconnexion</a>
+   </body>
+   </html>

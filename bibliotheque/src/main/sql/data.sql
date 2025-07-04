@@ -5,33 +5,38 @@ DELETE FROM exemplaire;
 DELETE FROM livre;
 DELETE FROM utilisateur;
 
--- Insert utilisateurs (passwords hashed with BCrypt for 'admin123' and 'user123')
-INSERT INTO utilisateur (nom, type, profil, abonnement_type, abonnement_debut, abonnement_fin, mot_de_passe) 
-VALUES 
-    ('admin', 'Admin', NULL, NULL, NULL, NULL, 'admin'), -- admin123
-    ('mimi', 'Adherent', 'Etudiant', 'Normal', '2025-07-01', '2025-12-31', 'mimi'), -- user123
-    ('lolo', 'Adherent', 'Anonyme', 'Normal', '2025-07-01', '2025-12-31', 'lolo'); -- user123
+-- Insert users
+INSERT INTO utilisateur (id, nom, type, profil, abonnement_type, abonnement_debut, abonnement_fin, mot_de_passe) VALUES
+(1, 'Admin User', 'Admin', NULL, NULL, NULL, NULL, 'mdp'),
+(2, 'Mimi', 'Adherent', 'Etudiant', 'Normal', '2025-01-01', '2025-12-31', 'mdp'),
+(3, 'Lolo', 'Adherent', 'Professeur', 'VIP', '2025-01-01', '2025-12-31', 'mdp'),
+(4, 'Nana', 'Adherent', 'Professionnel', 'Normal', '2025-06-01', '2025-11-30', 'mdp');
 
--- Insert livres
-INSERT INTO livre (titre, auteur, date_parution, isbn, categorie, editeur, langue) 
-VALUES 
-    ('Livre 1', 'Auteur 1', '2020-01-01', '9783161484100', 'Fiction', 'Éditeur 1', 'Français'),
-    ('Livre 2', 'Auteur 2', '2021-06-15', '9781234567897', 'Science', 'Éditeur 2', 'Anglais');
+-- Insert books
+INSERT INTO livre (id, titre, auteur, date_parution, isbn, categorie, editeur, langue) VALUES
+(1, 'Les Misérables', 'Victor Hugo', '1862-01-01', '9780140444308', 'Fiction', 'Penguin Classics', 'Français'),
+(2, '1984', 'George Orwell', '1949-06-08', '9780451524935', 'Dystopie', 'Signet Classics', 'Anglais'),
+(3, 'Le Petit Prince', 'Antoine de Saint-Exupéry', '1943-04-06', '9780156013987', 'Jeunesse', 'Harcourt', 'Français');
 
 -- Insert exemplaires
-INSERT INTO exemplaire (livre_id, statut) 
-VALUES 
-    (1, 'disponible'), -- Exemplaire ID: 1 for Livre 1
-    (1, 'emprunte'),   -- Exemplaire ID: 2 for Livre 1
-    (2, 'disponible'); -- Exemplaire ID: 3 for Livre 2
+INSERT INTO exemplaire (id, livre_id, statut) VALUES
+(1, 1, 'disponible'),
+(2, 1, 'disponible'),
+(3, 2, 'disponible'),
+(4, 2, 'disponible'),
+(5, 3, 'disponible');
 
--- Insert prets
-INSERT INTO pret (utilisateur_id, exemplaire_id, date_pret, date_retour_prevue, statut) 
-VALUES 
-    (2, 2, '2025-07-01', '2025-07-15', 'en cours'); -- mimi borrows Exemplaire ID: 2
+-- Insert loans
+INSERT INTO pret (id, utilisateur_id, exemplaire_id, date_pret, date_retour_prevue, statut) VALUES
+(1, 2, 2, '2025-07-01', '2025-07-15', 'en cours'),
+(2, 3, 3, '2025-07-02', '2025-07-16', 'en cours');
 
 -- Insert reservations
-INSERT INTO reservation (utilisateur_id, exemplaire_id, date_reservation, date_expiration, statut) 
-VALUES 
-    (2, 1, '2025-07-03', '2025-07-10', 'en_attente'), -- mimi reserves Exemplaire ID: 1
-    (3, 1, '2025-07-03', '2025-07-10', 'en_attente'); -- lolo reserves Exemplaire ID: 1
+INSERT INTO reservation (id, utilisateur_id, exemplaire_id, date_reservation, date_expiration, statut) VALUES
+(1, 3, 3, '2025-07-01', '2025-07-08', 'approuve'),
+(2, 4, 4, '2025-07-03', '2025-07-10', 'en_attente');
+
+-- Insert prolongements
+INSERT INTO prolongement (id, pret_id, utilisateur_id, date_demande, nouvelle_date_retour, statut) VALUES
+(1, 1, 2, '2025-07-03', '2025-07-22', 'en_attente'),
+(2, 2, 3, '2025-07-03', '2025-07-23', 'en_attente');

@@ -9,8 +9,10 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
-        a.button { display: inline-block; padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; }
+        a.button { display: inline-block; padding: 5px 10px; background-color: #4CAF50; color: white; text-decoration: none; margin-right: 5px; }
         a.button:hover { background-color: #45a049; }
+        a.prolong-button { background-color: #2196F3; }
+        a.prolong-button:hover { background-color: #1e88e5; }
     </style>
 </head>
 <body>
@@ -36,6 +38,9 @@
                 <a th:if="${pret.statut == 'en cours'}"
                    th:href="@{/prets/retour(pretId=${pret.id})}"
                    class="button">Retourner</a>
+                <a th:if="${pret.statut == 'en cours'}"
+                   th:href="@{/prets/prolongement(pretId=${pret.id})}"
+                   class="button prolong-button">Prolonger</a>
             </td>
         </tr>
     </table>

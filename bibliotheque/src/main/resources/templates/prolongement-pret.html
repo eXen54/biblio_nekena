@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Demande de Prolongation de Prêt</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+        h1 { text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="date"] { width: 100%; padding: 8px; }
+        input[type="submit"] { padding: 10px 20px; background-color: #2196F3; color: white; border: none; cursor: pointer; }
+        input[type="submit"]:hover { background-color: #1e88e5; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Demande de Prolongation de Prêt</h1>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <form th:action="@{/prets/prolongement}" method="post">
+        <input type="hidden" name="pretId" th:value="${pretId}"/>
+        <div class="form-group">
+            <label for="currentDateRetourPrevue">Date de retour prévue actuelle</label>
+            <input type="date" id="currentDateRetourPrevue" th:value="${currentDateRetourPrevue}" readonly/>
+        </div>
+        <div class="form-group">
+            <label for="nouvelleDateRetour">Nouvelle date de retour proposée</label>
+            <input type="date" id="nouvelleDateRetour" name="nouvelleDateRetour" />
+        </div>
+        <input type="submit" value="Soumettre la demande"/>
+    </form>
+    <p><a href="/prets">Retour à la liste des prêts</a></p>
+</body>
+</html>

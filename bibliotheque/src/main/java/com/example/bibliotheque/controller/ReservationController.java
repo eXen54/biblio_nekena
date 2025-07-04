@@ -2,10 +2,12 @@ package com.example.bibliotheque.controller;
 
 import com.example.bibliotheque.model.Exemplaire;
 import com.example.bibliotheque.model.Reservation;
+import com.example.bibliotheque.model.TypeUtilisateur; // Import for enum
 import com.example.bibliotheque.model.Utilisateur;
 import com.example.bibliotheque.repository.ExemplaireRepository;
 import com.example.bibliotheque.repository.LivreRepository;
 import com.example.bibliotheque.repository.ReservationRepository;
+import com.example.bibliotheque.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,24 +32,36 @@ public class ReservationController {
     @Autowired
     private ExemplaireRepository exemplaireRepository;
 
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
+
     @GetMapping("/reservations/nouveau")
     public String afficherFormulaireReservation(@RequestParam("livreId") Long livreId, Model model, Authentication authentication) {
         if (!livreRepository.existsById(livreId)) {
             model.addAttribute("error", "Livre non trouvé...");
             return "redirect:/livres";
         }
-        Utilisateur utilisateur = (Utilisateur) authentication.getPrincipal();
-        if (!utilisateur.getType().equals("Adherent")) {
+
+        String username = authentication.getName();
+        Utilisateur utilisateur = utilisateurRepository.findByNom(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        if (utilisateur.getType() != TypeUtilisateur.Adherent) {
             model.addAttribute("error", "Seuls les adhérents peuvent réserver.");
             return "redirect:/livres";
         }
+
         List<Exemplaire> exemplairesDisponibles = exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible");
         if (exemplairesDisponibles.isEmpty()) {
             model.addAttribute("error", "Aucun exemplaire disponible pour ce livre.");
             return "redirect:/livres";
         }
+
         model.addAttribute("livre", livreRepository.findById(livreId).get());
         model.addAttribute("exemplaires", exemplairesDisponibles);
+        model.addAttribute("livreId", livreId);
+        // No dateReservation or dateExpiration in model, as both are chosen manually
+
         return "reservation";
     }
 
@@ -61,23 +76,38 @@ public class ReservationController {
             model.addAttribute("error", "Livre ou exemplaire non trouvé...");
             return "redirect:/livres";
         }
-        Utilisateur utilisateur = (Utilisateur) authentication.getPrincipal();
-        if (!utilisateur.getType().equals("Adherent")) {
+
+        String username = authentication.getName();
+        Utilisateur utilisateur = utilisateurRepository.findByNom(username)
+                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+
+        if (utilisateur.getType() != TypeUtilisateur.Adherent) {
             model.addAttribute("error", "Seuls les adhérents peuvent réserver.");
             return "redirect:/livres";
         }
+
         Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId).get();
         if (!exemplaire.getStatut().equals("disponible")) {
             model.addAttribute("error", "Cet exemplaire n'est plus disponible.");
             return "redirect:/livres";
         }
+
+        // Validate dates
+        LocalDate reservationDate = LocalDate.parse(dateReservation);
+        LocalDate expirationDate = LocalDate.parse(dateExpiration);
+        if (expirationDate.isBefore(reservationDate) || expirationDate.isBefore(LocalDate.now())) {
+            model.addAttribute("error", "La date d'expiration doit être postérieure à la date de réservation et à aujourd'hui.");
+            return "redirect:/reservations/nouveau?livreId=" + livreId;
+        }
+
         Reservation reservation = new Reservation();
         reservation.setUtilisateur(utilisateur);
         reservation.setExemplaire(exemplaire);
-        reservation.setDateReservation(LocalDate.parse(dateReservation));
-        reservation.setDateExpiration(LocalDate.parse(dateExpiration));
+        reservation.setDateReservation(reservationDate);
+        reservation.setDateExpiration(expirationDate);
         reservation.setStatut(Reservation.Statut.en_attente);
         reservationRepository.save(reservation);
+
         return "redirect:/home";
     }
 
