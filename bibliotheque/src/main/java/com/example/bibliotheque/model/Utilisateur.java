@@ -28,7 +28,10 @@ public class Utilisateur {
     @Column(nullable = false)
     private String motDePasse;
 
-    // Getters et setters
+    @Column(name = "penalite_fin")
+    private LocalDate penaliteFin;
+
+    // Getters and setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getNom() { return nom; }
@@ -45,8 +48,6 @@ public class Utilisateur {
     public void setAbonnementFin(LocalDate abonnementFin) { this.abonnementFin = abonnementFin; }
     public String getMotDePasse() { return motDePasse; }
     public void setMotDePasse(String motDePasse) { this.motDePasse = motDePasse; }
+    public LocalDate getPenaliteFin() { return penaliteFin; }
+    public void setPenaliteFin(LocalDate penaliteFin) { this.penaliteFin = penaliteFin; }
 }
-
-
-
-

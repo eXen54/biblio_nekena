@@ -1,6 +1,7 @@
 package com.example.bibliotheque.controller;
 
 import com.example.bibliotheque.model.Exemplaire;
+import com.example.bibliotheque.model.Livre;
 import com.example.bibliotheque.model.Pret;
 import com.example.bibliotheque.model.Prolongement;
 import com.example.bibliotheque.model.Reservation;
@@ -12,6 +13,8 @@ import com.example.bibliotheque.repository.PretRepository;
 import com.example.bibliotheque.repository.ProlongementRepository;
 import com.example.bibliotheque.repository.ReservationRepository;
 import com.example.bibliotheque.repository.UtilisateurRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -60,23 +63,69 @@ public class PretController {
         model.addAttribute("utilisateur", utilisateur);
         return "prets";
     }
+    private static final Logger logger = LoggerFactory.getLogger(PretController.class);
 
     @GetMapping("/prets/nouveau")
     public String afficherFormulairePret(@RequestParam("exemplaireId") Long exemplaireId, Model model, Authentication authentication) {
-        Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId)
-                .orElseThrow(() -> new RuntimeException("Exemplaire non trouvé"));
-        Long livreId = exemplaire.getLivre().getId();
-        if (!livreRepository.existsById(livreId)) {
-            model.addAttribute("error", "Livre non trouvé...");
-            return "redirect:/livres";
-        }
+        
+        logger.debug("Processing /prets/nouveau with exemplaireId: {}", exemplaireId);
+
+        // Get authenticated user
         String username = authentication.getName();
         Utilisateur utilisateur = utilisateurRepository.findByNom(username)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-        if (utilisateur.getType() != TypeUtilisateur.Adherent) {
-            model.addAttribute("error", "Seuls les adhérents peuvent emprunter.");
-            return "redirect:/livres";
+                .orElse(null);
+        if (utilisateur == null) {
+            
+            logger.warn("Utilisateur not found for username: {}", username);
+            model.addAttribute("error", "Utilisateur non trouvé.");
+            return "nouveau-pret";
         }
+
+        // Check penalty status
+        if (utilisateur.getPenaliteFin() != null && utilisateur.getPenaliteFin().isAfter(LocalDate.now())) {
+            
+            logger.debug("Utilisateur {} is under penalty until {}", username, utilisateur.getPenaliteFin());
+            model.addAttribute("error", "Vous ne pouvez pas emprunter de livre car vous êtes sous pénalité jusqu'au " + utilisateur.getPenaliteFin());
+            return "nouveau-pret";
+        }
+
+        // Check user role
+        if (utilisateur.getType() != TypeUtilisateur.Adherent) {
+            
+            logger.debug("Utilisateur {} is not an Adherent", username);
+            model.addAttribute("error", "Seuls les adhérents peuvent emprunter.");
+            return "nouveau-pret";
+        }
+
+        // Find exemplaire
+        Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId)
+                .orElse(null);
+        if (exemplaire == null) {
+            
+            logger.warn("Exemplaire not found for ID: {}", exemplaireId);
+            model.addAttribute("error", "Exemplaire non trouvé pour l'ID : " + exemplaireId);
+            return "nouveau-pret";
+        }
+
+        // Get associated livre
+        Livre livre = exemplaire.getLivre();
+        if (livre == null) {
+            
+            logger.warn("Livre not found for exemplaire ID: {}", exemplaireId);
+            model.addAttribute("error", "Livre non trouvé pour cet exemplaire.");
+            return "nouveau-pret";
+        }
+
+        // Verify livre exists in repository
+        Long livreId = livre.getId();
+        if (!livreRepository.existsById(livreId)) {
+            
+            logger.warn("Livre not found in repository for ID: {}", livreId);
+            model.addAttribute("error", "Livre non trouvé.");
+            return "nouveau-pret";
+        }
+
+        // Check eligible exemplaires
         List<Exemplaire> exemplairesDisponibles = exemplaireRepository.findByLivreIdAndStatut(livreId, "disponible");
         List<Exemplaire> exemplairesReserves = exemplaireRepository.findByLivreIdAndStatut(livreId, "reserve");
         List<Exemplaire> exemplairesEligibles = new ArrayList<>(exemplairesDisponibles);
@@ -86,14 +135,22 @@ public class PretController {
                 exemplairesEligibles.add(ex);
             }
         }
+
+        // Verify exemplaire is eligible
         if (!exemplairesEligibles.stream().anyMatch(ex -> ex.getId().equals(exemplaireId))) {
+            
+            logger.debug("Exemplaire {} is not eligible for utilisateur {}", exemplaireId, utilisateur.getId());
             model.addAttribute("error", "Cet exemplaire n'est pas disponible ou réservé pour vous.");
-            return "redirect:/livres";
+            return "nouveau-pret";
         }
-        model.addAttribute("livre", livreRepository.findById(livreId).get());
+
+        // Add attributes to model
+        model.addAttribute("livre", livre);
         model.addAttribute("exemplaires", exemplairesEligibles);
         model.addAttribute("selectedExemplaireId", exemplaireId);
         model.addAttribute("utilisateur", utilisateur);
+        
+        logger.debug("Loaded livre ID: {} and exemplaireId: {} for utilisateur: {}", livreId, exemplaireId, username);
         return "nouveau-pret";
     }
 
@@ -104,18 +161,35 @@ public class PretController {
                            @RequestParam("dateRetourPrevue") String dateRetourPrevue,
                            Authentication authentication,
                            Model model) {
-        if (!livreRepository.existsById(livreId) || !exemplaireRepository.existsById(exemplaireId)) {
-            model.addAttribute("error", "Livre ou exemplaire non trouvé...");
-            return "redirect:/livres";
+                            // Find the copy (Exemplaire) by ID
+            Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId).get();
+        if (exemplaire == null) {
+            model.addAttribute("error", "Exemplaire non trouvé pour l'ID : " + exemplaireId);
+            return "nouveau-pret"; // Still render the template to show the error
+        }
+
+        // Get the associated book (Livre) from the copy
+        Livre livre = exemplaire.getLivre();
+        if (livre == null) {
+            model.addAttribute("error", "Livre non trouvé pour cet exemplaire.");
+            return "nouveau-pret"; // Still render the template to show the error
         }
         String username = authentication.getName();
         Utilisateur utilisateur = utilisateurRepository.findByNom(username)
                 .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        // Check penalty status
+        if (utilisateur.getPenaliteFin() != null && utilisateur.getPenaliteFin().isAfter(LocalDate.now())) {
+            model.addAttribute("error", "Vous ne pouvez pas emprunter de livre car vous êtes sous pénalité jusqu'au " + utilisateur.getPenaliteFin());
+            return "nouveau-pret";
+        }
+        if (!livreRepository.existsById(livreId) || !exemplaireRepository.existsById(exemplaireId)) {
+            model.addAttribute("error", "Livre ou exemplaire non trouvé...");
+            return "redirect:/livres";
+        }
         if (utilisateur.getType() != TypeUtilisateur.Adherent) {
             model.addAttribute("error", "Seuls les adhérents peuvent emprunter.");
             return "redirect:/livres";
         }
-        Exemplaire exemplaire = exemplaireRepository.findById(exemplaireId).get();
         boolean wasReserved = exemplaire.getStatut().equals("reserve");
         if (wasReserved) {
             Reservation reservation = reservationRepository.findByExemplaireIdAndStatut(exemplaireId, Reservation.Statut.approuve);
@@ -171,12 +245,23 @@ public class PretController {
         }
         Exemplaire exemplaire = exemplaireRepository.findById(pret.getExemplaireId())
                 .orElseThrow(() -> new RuntimeException("Exemplaire non trouvé"));
-        pret.setDateRetourEffective(LocalDate.parse(dateRetourEffective));
+        LocalDate retourDate = LocalDate.parse(dateRetourEffective);
+        pret.setDateRetourEffective(retourDate);
         pret.setStatut("termine");
+        // Check for late return and apply penalty
+        if (retourDate.isAfter(pret.getDateRetourPrevue())) {
+            Utilisateur utilisateur = utilisateurRepository.findById(pret.getUtilisateurId())
+                    .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+            utilisateur.setPenaliteFin(retourDate.plusDays(10));
+            utilisateurRepository.save(utilisateur);
+            model.addAttribute("message", "Livre rendu en retard. Vous êtes sous pénalité jusqu'au " + utilisateur.getPenaliteFin());
+        } else {
+            model.addAttribute("message", "Livre rendu avec succès.");
+        }
         exemplaire.setStatut("disponible");
         pretRepository.save(pret);
         exemplaireRepository.save(exemplaire);
-        return "redirect:/prets";
+        return "retour-pret";
     }
 
     @GetMapping("/prets/prolongement")
